@@ -3,6 +3,17 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 
+class LocaleNotifier extends ChangeNotifier {
+  Locale _locale = Locale("en");
+
+  Locale get locale => _locale;
+
+  void setLocale(Locale locale) async {
+    _locale = locale;
+    notifyListeners();
+  }
+}
+
 class TLocal {
   Locale _locale;
 
@@ -41,26 +52,28 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TLocal tl = TLocal(Locale("en", "US"));
 
-    TLocal tl = TLocal(Locale("en","US"));
-
-
-    return MaterialApp(
-      title: 'Flutter Localize Demo',
-        // localizationsDelegates: [
-        //   GlobalMaterialLocalizations.delegate,
-        //   GlobalWidgetsLocalizations.delegate,
-        //   GlobalCupertinoLocalizations.delegate,
-        // ],
-        // supportedLocales: [
-        //   Locale('en'), // English
-        //   Locale('es'), // Spanish
-        // ],
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const Localize_Home()
-    );
+    // return ChangeNotifierProvider(
+    //     create: (context) => LocaleNotifier(),
+    //     builder: (context, child) {
+          return MaterialApp(
+              title: 'Flutter Localize Demo',
+              // localizationsDelegates: [
+              //   GlobalMaterialLocalizations.delegate,
+              //   GlobalWidgetsLocalizations.delegate,
+              //   GlobalCupertinoLocalizations.delegate,
+              // ],
+              // supportedLocales: [
+              //   Locale('en'), // English
+              //   Locale('es'), // Spanish
+              // ],
+              theme: ThemeData(
+                primarySwatch: Colors.blue,
+              ),
+              home: const Localize_Home()
+          );
+        // });
   }
 }
 
@@ -80,6 +93,17 @@ class _Localize_HomeState extends State<Localize_Home> {
             .getTranslatedValue("home_title")
             .toString(),),
       ),
+      body: SizedBox.expand(
+        child:Column(children: [
+          DropdownButton(items: [
+            DropdownMenuItem(child: Text("English"), value: "en",),
+            DropdownMenuItem(child: Text("Spanish"), value: "es",)
+          ], onChanged: (val){
+            TLocal.of(context)._locale = Locale(val!);
+            TLocal.of(context).loadLanguage();
+          })
+        ],)
+      )
     );
   }
 }
