@@ -2,5 +2,8 @@
 
 {
   "home_title": "Demostración de localización",
-  "home_main_text": "Algunos ejemplos de texto para probar"
+  "home_main_text": "Algunos ejemplos de texto para probar",
+  "select_language": "Languaje",
+  "pick_date": "Escoger Fecha",
+  "pick_time": "Escoger Tiempo"
 }

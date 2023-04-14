@@ -2,5 +2,8 @@
 
 {
   "home_title": "Localization Demo",
-  "home_main_text": "Some sample text for testing"
+  "home_main_text": "Some sample text for testing",
+  "select_language": "Language",
+  "pick_date": "Pick Date",
+  "pick_time": "Pick Time"
 }

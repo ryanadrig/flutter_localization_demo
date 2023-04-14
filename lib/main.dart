@@ -1,68 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'dart:convert';
-import 'package:flutter/services.dart';
-
-class LocaleNotifier extends ChangeNotifier {
-  Locale _locale = Locale("en");
-
-  Locale get locale => _locale;
-
-  void setLocale(Locale locale) async {
-    _locale = locale;
-    notifyListeners();
-  }
-}
-
-
-
-class TLocalWrapper extends InheritedWidget {
-  final TLocal tlocal;
-
-  TLocalWrapper({Key? key,
-    required this.tlocal,
-    required Widget child}) : super(key: key, child: child);
-
-  @override
-  bool updateShouldNotify(TLocalWrapper oldWidget) {
-    return tlocal != oldWidget.tlocal;
-  }
-}
-
-class TLocal {
-  TLocal(this._locale);
-  Locale _locale = Locale("en");
-
-  static TLocal of(BuildContext context) {
-    // return Localizations.of<TLocal>(context, TLocal)!;
-    return context.dependOnInheritedWidgetOfExactType<TLocalWrapper>()!.tlocal;
-  }
-
-  Map<String, String>? _localizedValues;
-
-  Future loadLanguage() async {
-    print("load language called");
-    print("load language with locale ~ " + _locale.languageCode);
-
-    String jsonTransValues = await rootBundle.loadString(
-        "assets/lang/${_locale.languageCode}.json"
-    );
-
-    Map <String, dynamic> mappedValues = json.decode(jsonTransValues);
-
-    print("mapped vals ~ " + mappedValues.toString());
-
-    _localizedValues = mappedValues.map((key,value) =>
-        MapEntry(key, value.toString()));
-
-  print("local vals ~ " + _localizedValues.toString());
-  }
-
-  String? getTranslatedValue(String key){
-    return _localizedValues![key];
-  }
-
-}
+import 'locale_wrapper.dart';
+import 'helpers.dart';
 
 void main() {
   runApp(const LocalizeApp());
@@ -83,7 +21,7 @@ class _LocalizeAppState extends State<LocalizeApp> {
   void initState() {
     Future.delayed(Duration.zero,()async{
        tl = TLocal(Locale("en", "US"));
-      await tl!.loadLanguage().then((res){
+      await tl.loadLanguage().then((res){
         setState(() {
           tl = tl;
         });
@@ -95,14 +33,28 @@ class _LocalizeAppState extends State<LocalizeApp> {
   Widget build(BuildContext context) {
 
       return
-      tl!._localizedValues == null?Container():
-      TLocalWrapper(tlocal: tl!,
+      tl.localizedValues == null?Container():
+      TLocalWrapper(tlocal: tl,
       child:
           MaterialApp(
           title: 'Flutter Localize Demo',
           theme: ThemeData(
           primarySwatch: Colors.blue,
           ),
+              supportedLocales: [
+            Locale('en', 'US'),
+            Locale('es', 'AR'),
+            Locale('zh', 'CN'),
+          ],
+          localeResolutionCallback: (deviceLocale, supportedLocales) {
+            for (var locale in supportedLocales) {
+              if (locale.languageCode == deviceLocale!.languageCode &&
+                  locale.countryCode == deviceLocale.countryCode) {
+                return deviceLocale;
+              }
+            }
+            return supportedLocales.first;
+          },
           home: Localize_Home()
           ));
 
@@ -129,18 +81,56 @@ class _Localize_HomeState extends State<Localize_Home> {
       body: SizedBox.expand(
         child:Column(children: [
           DropdownButton(
+            hint:Text(TLocal.of(context)
+            .getTranslatedValue("select_language")!) ,
             // value: get_disp_lang_for_lang_code(TLocal.of(context)._locale.languageCode),
               items: [
             DropdownMenuItem(child: Text("English"), value: "en",),
             DropdownMenuItem(child: Text("Spanish"), value: "es",),
-                DropdownMenuItem(child: Text("Chinese"), value: "zh",)
+                DropdownMenuItem(child: Text("中国人"), value: "zh",)
           ], onChanged: (val){
-            TLocal.of(context)._locale = Locale(val!);
+            TLocal.of(context).locale = Locale(val!);
             TLocal.of(context).loadLanguage();
             setState(() {});
           }),
 
-         MainTextWidget()
+        const SizedBox(height: 40,),
+         MainTextWidget(),
+          const SizedBox(height: 40,),
+          Row(
+         mainAxisAlignment: MainAxisAlignment.center,
+         children: [
+         ElevatedButton(
+         onPressed: () {
+         showDatePicker(
+         context: context,
+         initialDate: DateTime(2021, 1, 1),
+         firstDate: DateTime(2021, 1, 1),
+         lastDate: DateTime(2021, 1, 31),
+         );
+         },
+         child: Text(
+           TLocal.of(context)
+               .getTranslatedValue("pick_date")!,
+         ),
+         ),
+         SizedBox(
+         width: 10,
+         ),
+         ElevatedButton(
+         onPressed: () {
+         showTimePicker(
+         context: context,
+         initialTime: TimeOfDay.now(),
+         );
+         },
+         child: Text(
+           TLocal.of(context)
+               .getTranslatedValue("pick_time")!,
+         ),
+         ),
+         ],
+         )
         ],)
       )
     );
@@ -160,15 +150,3 @@ class MainTextWidget extends StatelessWidget {
 }
 
 
-String get_disp_lang_for_lang_code(lc){
-  if (lc == "en"){
-    return "English";
-  }
-  if (lc == "es"){
-    return "Spanish";
-  }
-  if (lc == "zh"){
-    return "Chinese";
-  }
-  return "Not Selected";
-}
