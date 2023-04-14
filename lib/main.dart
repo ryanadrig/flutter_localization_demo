@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'dart:convert';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'locale_wrapper.dart';
 import 'helpers.dart';
 
@@ -46,15 +49,22 @@ class _LocalizeAppState extends State<LocalizeApp> {
             Locale('es', 'AR'),
             Locale('zh', 'CN'),
           ],
-          localeResolutionCallback: (deviceLocale, supportedLocales) {
-            for (var locale in supportedLocales) {
-              if (locale.languageCode == deviceLocale!.languageCode &&
-                  locale.countryCode == deviceLocale.countryCode) {
-                return deviceLocale;
-              }
-            }
-            return supportedLocales.first;
-          },
+              localizationsDelegates: [
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+                TLocal.delegate
+              ],
+          // Doesn't seem neccessary or useful
+          // localeResolutionCallback: (deviceLocale, supportedLocales) {
+          //   for (var locale in supportedLocales) {
+          //     if (locale.languageCode == deviceLocale!.languageCode &&
+          //         locale.countryCode == deviceLocale.countryCode) {
+          //       return deviceLocale;
+          //     }
+          //   }
+          //   return supportedLocales.elementAt(0);
+          // },
           home: Localize_Home()
           ));
 
@@ -104,6 +114,7 @@ class _Localize_HomeState extends State<Localize_Home> {
          onPressed: () {
          showDatePicker(
          context: context,
+         locale: TLocal.of(context).locale,
          initialDate: DateTime(2021, 1, 1),
          firstDate: DateTime(2021, 1, 1),
          lastDate: DateTime(2021, 1, 31),
@@ -121,7 +132,17 @@ class _Localize_HomeState extends State<Localize_Home> {
          onPressed: () {
          showTimePicker(
          context: context,
-         initialTime: TimeOfDay.now(),
+           helpText:  TLocal.of(context)
+               .getTranslatedValue("time_pick_help_text")!,
+           confirmText:TLocal.of(context)
+             .getTranslatedValue("time_pick_confirm_text")!,
+           cancelText: TLocal.of(context)
+               .getTranslatedValue("time_pick_cancel_text")!,
+           hourLabelText: TLocal.of(context)
+               .getTranslatedValue("time_pick_hour_label")!,
+           minuteLabelText: TLocal.of(context)
+               .getTranslatedValue("time_pick_minute_label")!,
+           initialTime: TimeOfDay.now(),
          );
          },
          child: Text(

@@ -5,5 +5,10 @@
   "home_main_text": "Some sample text for testing",
   "select_language": "Language",
   "pick_date": "Pick Date",
-  "pick_time": "Pick Time"
+  "pick_time": "Pick Time",
+  "time_pick_help_text": "SELECT TIME",
+  "time_pick_confirm_text": "OK",
+  "time_pick_cancel_text": "CANCEL",
+  "time_pick_hour_label": "Hour",
+  "time_pick_minute_label": "Minute"
 }

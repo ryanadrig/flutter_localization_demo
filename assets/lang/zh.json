@@ -5,5 +5,11 @@
   "home_main_text": "一些用于测试的示例文本",
   "select_language": "语言",
   "pick_date": "选择日期",
-  "pick_time": "选择时间"
+  "pick_time": "选择时间",
+  "time_pick_help_text": "选择时间",
+  "time_pick_confirm_text": "接受",
+  "time_pick_cancel_text": "取消",
+  "time_pick_hour_label": "小时",
+  "time_pick_minute_label": "分钟"
+
 }

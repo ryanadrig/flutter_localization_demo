@@ -5,5 +5,10 @@
   "home_main_text": "Algunos ejemplos de texto para probar",
   "select_language": "Languaje",
   "pick_date": "Escoger Fecha",
-  "pick_time": "Escoger Tiempo"
+  "pick_time": "Escoger Tiempo",
+  "time_pick_help_text": "Escoger Tiempo",
+  "time_pick_confirm_text": "ACCEPTAR",
+  "time_pick_cancel_text": "CANCELAR",
+  "time_pick_hour_label": "Hora",
+  "time_pick_minute_label": "Minuto"
 }

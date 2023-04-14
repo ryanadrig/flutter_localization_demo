@@ -49,17 +49,29 @@ class TLocal {
     return localizedValues![key];
   }
 
+  static const LocalizationsDelegate<TLocal> delegate =
+  AppLocalizationDelegate();
+
 }
 
 
-// might be needed for more complex widget trees
-// class LocaleNotifier extends ChangeNotifier {
-//   Locale _locale = Locale("en");
-//
-//   Locale get locale => _locale;
-//
-//   void setLocale(Locale locale) async {
-//     _locale = locale;
-//     notifyListeners();
-//   }
-// }
+class AppLocalizationDelegate extends LocalizationsDelegate<TLocal> {
+  const AppLocalizationDelegate();
+
+  @override
+  bool isSupported(Locale locale) {
+    return ["en", "es", "zh"].contains(locale.languageCode);
+  }
+
+  @override
+  Future<TLocal> load(Locale locale) async {
+    TLocal translation_local = TLocal(locale);
+    await translation_local.loadLanguage();
+    return translation_local;
+  }
+
+  @override
+  bool shouldReload(AppLocalizationDelegate old) => false;
+}
+
+
